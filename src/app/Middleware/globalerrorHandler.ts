@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 
 import { ErrorRequestHandler, NextFunction } from 'express';
 import { ZodError } from 'zod';

@@ -1,7 +1,24 @@
 import mongoose, { Schema } from 'mongoose';
-import { TBlog } from './Blog.interface';
+import { TAuthor, TBlog } from './Blog.interface';
 
+const AurhorScheema = new Schema<TAuthor>(
 
+    {
+        AuthorName: {
+            type: String,
+            required: true,
+          },
+          email: {
+            type: String,
+            required: true,
+          },
+          role: {
+            type: String,
+            required: true,
+          }}
+    
+    
+)
 const BlogSchema = new Schema<TBlog>(
   {
     title: {
@@ -13,11 +30,7 @@ const BlogSchema = new Schema<TBlog>(
       type: String,
       required: [true, 'Content is required'],
     },
-    author: {
-      type: Schema.Types.ObjectId,
-      ref: 'User', 
-      required: [true, 'Author is required'],
-    },
+author:AurhorScheema,
     isPublished: {
       type: Boolean,
       default: true, 
