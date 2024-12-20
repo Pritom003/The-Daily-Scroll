@@ -1,15 +1,9 @@
 import { z } from 'zod';
 
-const NameValSchema = z.object({
-  firstName: z.string().min(1, { message: 'First name is required' }),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, { message: 'Last name is required' }),
-});
 
 const CreateUserValSchema = z.object({
   body: z.object({
-    name: NameValSchema,
-    gender: z.enum(['male', 'female', 'other'], { message: 'Gender must be one of male, female, or other' }),
+    name: z.string().min(1, { message: ' name is required' }),
     email: z.string().email({ message: 'Invalid email format' }),
     isBlocked: z.boolean().optional().default(false),
     needsPasswordChange: z.boolean().optional().default(false),
@@ -21,7 +15,7 @@ const CreateUserValSchema = z.object({
 const UpdateUserValSchema = z.object({
   body: z.object({
   
-        name: NameValSchema.partial(), // Makes all fields of name optional
+    name: z.string().optional(), // Makes all fields of name optional
         gender: z.enum(['male', 'female', 'other']).optional(),
         email: z.string().email({ message: 'Invalid email format' }).optional(),
         isBlocked: z.boolean().optional(),

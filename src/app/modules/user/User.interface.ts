@@ -1,14 +1,10 @@
-export type TName = {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-  };
+import { Model } from "mongoose";
+
 
 
 export type TUser= {
     _id: string;
-    name: TName;
-    gender: 'male' | 'female' | 'other';
+    name: string;
     email: string;
     isBlocked: boolean;
     password: string;
@@ -17,3 +13,9 @@ export type TUser= {
     isDeleted: boolean;
    
   };
+  export interface UserModel extends Model<TUser> {
+    isUserExistByemail(email: string): Promise<TUser | null>; 
+    isPasswordmatched(plainPassword: string, hashPassword: string): Promise<boolean>;
+    isUserBlocked(useremail: string): Promise<TUser | null>; 
+  }
+  

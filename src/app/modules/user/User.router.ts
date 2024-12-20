@@ -1,14 +1,13 @@
 import express from 'express';
-import validationRequest from '../../Middleware/ValidationRequest';
-import { UserValidation } from './User.validation';
 import { UserController } from './User.controller';
+import auth from '../../Middleware/auth';
 
 
 // import StudentValidation  from '../students/student.validation';
 const router = express.Router();
 
 // call the controller
-router.post(
-  '/create-user',validationRequest(UserValidation.CreateUserValSchema),UserController.createUser
+router.get(
+  '/',auth('admin'),UserController.getAllUsers
 );
 export const userRoutes = router;

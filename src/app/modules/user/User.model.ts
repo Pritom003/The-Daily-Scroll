@@ -1,21 +1,14 @@
 import mongoose, { Schema} from 'mongoose';
-import { TName, TUser } from './User.interface';
+import {  TUser, UserModel } from './User.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-
-const UserNameSchema = new Schema<TName>({
-    firstName: { type: String, required: true },
-    middleName: { type: String },
-    lastName: { type: String, required: true },
-  });
-
-const UserSchema= new Schema<TUser>(
+const UserSchema= new Schema<TUser,UserModel>(
   {
-    name: UserNameSchema,
-      gender: {
-        type: String,
-        enum: ['male', 'female', 'other'],
-        required: [true, 'Gender is required'],
-      },
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+    },
       email: {
         type: String,
         required: [true, 'Email is required'],
@@ -34,7 +27,7 @@ const UserSchema= new Schema<TUser>(
       },
       needsPasswordChange: {
         type: Boolean,
-        default: false,
+        default: true,
       },
       role: {
         type: String,
@@ -51,8 +44,34 @@ const UserSchema= new Schema<TUser>(
     timestamps: true, 
   }
 );
+UserSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; 
+  // hashing password and save into DB
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bycrypt_pass),
+  );
+  next(); 
+});
+UserSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+UserSchema.statics.isUserExistByemail = async function (email: string): Promise<TUser | null>
+ {
+  return await this.findOne({ email }).select('+password');
+};
+
+ UserSchema.statics.isPasswordmatched=async function(PlainPassword,HashPassword){
+  return await bcrypt.compare(PlainPassword,HashPassword)
+ }
+ UserSchema.statics.isUserBlocked = async function (useremail :string) {
+  const user = await this.findOne({ email: useremail, isBlocked: true });
+  return user; 
+};
 
 // Mongoose Model
-const User = mongoose.model<TUser>('User', UserSchema);
+const User = mongoose.model<TUser,UserModel>('User', UserSchema);
 
 export default User;

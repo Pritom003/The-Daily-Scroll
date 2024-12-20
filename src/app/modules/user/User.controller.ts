@@ -2,17 +2,17 @@ import { RequestHandler } from "express";
 
 import httpStatus from 'http-status';
 import CatchAsync from "../../utils/fetch.async";
-import { UserServices } from "./User.server";
+
 import sendResponse from "../../utils/sendResponse";
+import { UserServices } from "./User.service";
 
-const createUser :RequestHandler = CatchAsync(async (req, res ) => {
+const getAllUsers :RequestHandler = CatchAsync(async (req, res ) => {
 
-
-    const result = await UserServices.createUserDB(req.body);
+    const result = await UserServices.getAllUserFromDB();
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'User is created succesfully',
+      message: 'Users are retrive  succesfully',
       data: result,
     });
 
@@ -20,5 +20,5 @@ const createUser :RequestHandler = CatchAsync(async (req, res ) => {
 
 
 export const UserController={
-createUser
+    getAllUsers
 }
