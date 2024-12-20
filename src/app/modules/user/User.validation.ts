@@ -5,6 +5,7 @@ const CreateUserValSchema = z.object({
   body: z.object({
     name: z.string().min(1, { message: ' name is required' }),
     email: z.string().email({ message: 'Invalid email format' }),
+    password: z.string().min(6, { message: 'Password should be atleast 6 charracters '}),
     isBlocked: z.boolean().optional().default(false),
     needsPasswordChange: z.boolean().optional().default(false),
     role: z.enum(['admin', 'user'], { message: 'Role must be one of admin, user, or manager' }).default('user'),

@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from'cookie-parser'
 import express, { Application,  Request, Response } from 'express';
 import router from './app/routes';
+import globalErrorHandler from './app/Middleware/globalerrorHandler';
+import notFound from './app/Middleware/NotFound';
 
 const app: Application = express();
 
@@ -12,13 +14,13 @@ app.use(cookieParser())
 app.use(cors());
 
 // app Routes
-app.use('/api/v1', router);
+app.use('/api', router);
 
 
 // Root route
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to the Express app!');
 });
-
-
+app.use(globalErrorHandler);
+app.use(notFound)
 export default app;

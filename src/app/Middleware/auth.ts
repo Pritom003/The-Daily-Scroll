@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 import CatchAsync from '../utils/fetch.async';
 import config from '../config';
 import User from '../modules/user/User.model';
+import httpStatus from 'http-status';
+import AppError from '../Errors/AppError';
 const auth=(...requiredRoles: string[])=>{
     return CatchAsync(async(req:Request,res:Response ,
         next:NextFunction)=>
@@ -12,7 +14,7 @@ const auth=(...requiredRoles: string[])=>{
         const token =req.headers.authorization
         if(!token)
         {
-            throw new Error(`Unauthorized User`);
+            throw new AppError(httpStatus.FORBIDDEN,`Unauthorized User `);
         }
 
         const decoded = jwt.verify(token, config.access_token,);
@@ -20,20 +22,20 @@ const auth=(...requiredRoles: string[])=>{
         const {role,email}=decoded as JwtPayload
         const user=await User.isUserExistByemail(email)
 if(!user){
-    throw new Error(`The User is not registered`);
+    throw new AppError(401,`Invalid credentials`);
 }
 const BlockedUser=await User.isUserBlocked(email)
 if(BlockedUser){
 
-    throw new Error(`The User is Blocked by admin`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is blocked `);
 }
 const isUserisDeleted=user?.isDeleted
 if(isUserisDeleted){
-    throw new Error(`The User is deleted`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is deleted `);
 }
 
  if(requiredRoles && !requiredRoles.includes(role)){
-    throw new Error(`Unauthorized User`);
+    throw new AppError(httpStatus.FORBIDDEN,`Unauthorized User `);
   }
      req.user=decoded as JwtPayload
 

@@ -3,9 +3,10 @@ import config from '../../config';
 import { TUser } from '../user/User.interface';
 import User from '../user/User.model';
 import { TLoginUser } from './Auth.interface';
-// import jwt from 'jsonwebtoken';
+import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { creatreToken } from './Auth.utils';
+import AppError from '../../Errors/AppError';
 const createUserDB = async ( payload: TUser) => {
 
     try {
@@ -16,7 +17,7 @@ const createUserDB = async ( payload: TUser) => {
         return newUser
    
     } catch (err: any) {
-      throw new Error(`Error in create User to DB: ${err.message}`);
+        throw new AppError(400,`Validation error ${err}`);
     }
   };
 
@@ -25,21 +26,21 @@ const Loginuserservice = async ( payload: TLoginUser) => {
 // check one find the user in db
 const user=await User.isUserExistByemail(payload.email)
 if(!user){
-    throw new Error(`The User is not registered`);
+    throw new AppError(401,`Invalid credentials`);
 }
 const BlockedUser=await User.isUserBlocked(payload.email)
 if(BlockedUser){
 
-    throw new Error(`The User is Blocked by admin`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is blocked `);
 }
 const isUserisDeleted=user?.isDeleted
 if(isUserisDeleted){
-    throw new Error(`The User is deleted`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is deleted`);
 }
 
 const correctPass= await User.isPasswordmatched(payload.password ,user?.password)
 if(!correctPass){
-    throw new Error(`Your Password is incorrect `);
+    throw new AppError(httpStatus.BAD_REQUEST,`The password is incorrect`);
 }
 const JwtPayload ={
     id:user._id,
@@ -72,16 +73,16 @@ const {email}=decoded as JwtPayload
 const user = await User.isUserExistByemail(email)
 
 if(!user){
-    throw new Error(`The User is not registered`);
+    throw new AppError(401,`Invalid credentials`);
 }
 const BlockedUser=await User.isUserBlocked(email)
 if(BlockedUser){
 
-    throw new Error(`The User is Blocked by admin`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is blocked `);
 }
 const isUserisDeleted=user?.isDeleted
 if(isUserisDeleted){
-    throw new Error(`The User is deleted`);
+    throw new AppError(httpStatus.FORBIDDEN,`The user is deleted `);
 }
 const JwtPayload ={
     id:user._id,
