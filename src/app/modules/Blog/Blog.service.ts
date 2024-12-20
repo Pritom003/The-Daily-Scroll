@@ -1,4 +1,7 @@
 
+
+// import QueryBuilder from "../../Builder/QueryBuilder";
+import QueryBuilder from "../../Builder/QueryBuilder";
 import AppError from "../../Errors/AppError";
 import User from "../user/User.model";
 import { TBlog } from "./Blog.interface";
@@ -27,6 +30,31 @@ const blogData = {
     const result = await Blog.create(blogData);
     return result;
   }
+//  Get All BLogs 
+
+const getAllBlogsFromDB = async (query :Record<string, unknown>) => {
+    const BLogSerachableFields=['title', 'author.AuthorName']
+    
+    const BLogs = new QueryBuilder(
+        Blog.find(),query
+        )
+        .search(BLogSerachableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+ 
+        const result=await  BLogs.modelQuery
+       
+    return result
+}
+
+
+
+
+
+
+
 
   const UpdateBlogintoDB = async (id: string, payload: TBlog) => {
     // Find the blog by ID
@@ -83,5 +111,6 @@ const blogData = {
   export const BLogService={
     createBlogtoDB,
     UpdateBlogintoDB,
-    DeleteBlofromDB
+    DeleteBlofromDB,
+    getAllBlogsFromDB
   }

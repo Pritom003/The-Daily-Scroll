@@ -9,7 +9,7 @@ import { JwtPayload } from "jsonwebtoken";
 const CreateBlog:RequestHandler = CatchAsync(async (req, res ) => {
 // console.log(req.user);
 const Blogdata = req.body;
-const author = req.user as JwtPayload; // Extract the user info from req.user
+const author = req.user as JwtPayload;
 
 // Add the author's ID to the blog data
 const result = await BLogService.createBlogtoDB({ ...Blogdata, author: author.id});;
@@ -22,6 +22,23 @@ const result = await BLogService.createBlogtoDB({ ...Blogdata, author: author.id
     });
 
 })
+
+const getAllBlogs:RequestHandler = CatchAsync(async (req, res ) => {
+  
+    console.log(req.query);
+    // Add the author's ID to the blog data
+    const result = await BLogService.getAllBlogsFromDB(req.query);;
+       
+        sendResponse(res, {
+          statusCode: httpStatus.OK,
+          success: true,
+          message: 'Blogs Retrive successfully',
+          data:result
+        });
+    
+    })
+
+
 const UpdateBlog:RequestHandler = CatchAsync(async (req, res ) => {
     const{ id }=req.params
     const Blogdata = req.body;
@@ -56,5 +73,6 @@ const UpdateBlog:RequestHandler = CatchAsync(async (req, res ) => {
         })
 export const BLogController={
     CreateBlog,
-    UpdateBlog,DeleteBlog
+    UpdateBlog,DeleteBlog,
+    getAllBlogs
 }

@@ -12,7 +12,7 @@ router.post(
   );
 // call the controller
 router.get(
-  '/',auth('admin'),
+  '/',BLogController.getAllBlogs
 );
 
 router.patch(
