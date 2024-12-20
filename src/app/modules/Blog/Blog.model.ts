@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { TAuthor, TBlog } from './Blog.interface';
+import { BlogModel, TAuthor, TBlog } from './Blog.interface';
 
 const AurhorScheema = new Schema<TAuthor>(
 
@@ -19,7 +19,7 @@ const AurhorScheema = new Schema<TAuthor>(
     
     
 )
-const BlogSchema = new Schema<TBlog>(
+const BlogSchema = new Schema<TBlog ,BlogModel>(
   {
     title: {
       type: String,
@@ -35,13 +35,20 @@ author:AurhorScheema,
       type: Boolean,
       default: true, 
     },
+    isDeleted: {
+        type: Boolean,
+        default: false, 
+      },
   },
   {
     timestamps: true, 
   }
 );
-
+BlogSchema.statics.isBLogDeleted = async function (id :string) {
+    const DeletedBlog = await this.findOne({ _id:id, isDeleted: true });
+    return DeletedBlog; 
+  };
 // Mongoose Model
-const Blog = mongoose.model<TBlog>('Blog', BlogSchema);
+const Blog = mongoose.model<TBlog ,BlogModel>('Blog', BlogSchema);
 
 export default Blog;

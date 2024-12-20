@@ -16,7 +16,7 @@ const CreateUserValSchema = z.object({
 const UpdateUserValSchema = z.object({
   body: z.object({
   
-    name: z.string().optional(), // Makes all fields of name optional
+    name: z.string().optional(), 
         gender: z.enum(['male', 'female', 'other']).optional(),
         email: z.string().email({ message: 'Invalid email format' }).optional(),
         isBlocked: z.boolean().optional(),

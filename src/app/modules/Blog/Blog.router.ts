@@ -8,10 +8,19 @@ import { BLogController } from './BLog.controller';
 // import StudentValidation  from '../students/student.validation';
 const router = express.Router();
 router.post(
-    '/blogs',auth('user'),validationRequest(BlogValidationScheema.createblogValidationSchema),BLogController.CreateBlog
+    '/',auth('user'),validationRequest(BlogValidationScheema.createblogValidationSchema),BLogController.CreateBlog
   );
 // call the controller
 router.get(
   '/',auth('admin'),
 );
+
+router.patch(
+    '/:id',auth('user'),validationRequest(BlogValidationScheema.UpdateblogValidationSchema),BLogController.UpdateBlog
+  );
+
+
+  router.delete(
+    '/:id',auth('user' ,'admin'),BLogController.DeleteBlog
+  );
 export const BlogRoutes = router;

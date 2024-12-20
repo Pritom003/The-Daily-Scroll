@@ -18,7 +18,34 @@ const getAllUsers :RequestHandler = CatchAsync(async (req, res ) => {
 
 })
 
+const DeleteBlogbyAdmin:RequestHandler = CatchAsync(async (req, res ) => {
+  const {id}=req.params
+// Add the author's ID to the blog data
+await UserServices.DeleteBlogByAdminfromDB(id);;
+     
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Blog deleted successfully',
+        data:{}
+      });
+  
+  })
+  const BlockUserbyAdmin:RequestHandler = CatchAsync(async (req, res ) => {
+    const id=req.params.userId
 
+    
+    // Add the author's ID to the blog data
+  await UserServices.BlockeUserByAdminfromDB(id);;
+       
+        sendResponse(res, {
+          statusCode: httpStatus.OK,
+          success: true,
+          message: 'User Blocked successfully',
+          data:{}
+        });
+    
+    })
 export const UserController={
-    getAllUsers
+    getAllUsers ,DeleteBlogbyAdmin,BlockUserbyAdmin
 }
