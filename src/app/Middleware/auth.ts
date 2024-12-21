@@ -16,8 +16,9 @@ const auth=(...requiredRoles: string[])=>{
         {
             throw new AppError(httpStatus.FORBIDDEN,`Unauthorized User `);
         }
-
-        const decoded = jwt.verify(token, config.access_token,);
+        const actualToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+        const decoded = jwt.verify(actualToken, config.access_token,);
+       
       
         const {role,email}=decoded as JwtPayload
         const user=await User.isUserExistByemail(email)

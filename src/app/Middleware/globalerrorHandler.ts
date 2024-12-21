@@ -10,6 +10,7 @@ import handleValidationError from '../Errors/handlevalidationError';
 import handleCastError from '../Errors/handleCastError';
 import handleDuplicateError from '../Errors/handleDuplicateError';
 import AppError from '../Errors/AppError';
+import handleAuthenticationError from '../Errors/handleAuthenticationerror';
 
 const globalErrorHandler: ErrorRequestHandler = (  err: any, req, res, next:NextFunction):void => {
   //setting default values
@@ -24,6 +25,11 @@ const globalErrorHandler: ErrorRequestHandler = (  err: any, req, res, next:Next
 
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
+    statusCode = simplifiedError?.statusCode;
+    message = simplifiedError?.message;
+    errorSources = simplifiedError?.errorSources;
+  }else if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+    const simplifiedError = handleAuthenticationError(err);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;

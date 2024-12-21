@@ -13,6 +13,7 @@ const createUserDB = async ( payload: TUser) => {
         if(!payload.password){
             payload.password=config.default_pass as string
         }
+  
         const newUser = await User.create(payload);
         return newUser
    

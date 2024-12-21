@@ -2,7 +2,8 @@ import mongoose, { Schema} from 'mongoose';
 import {  TUser, UserModel } from './User.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
-
+import AppError from '../../Errors/AppError';
+import httpStatus from 'http-status';
 const UserSchema= new Schema<TUser,UserModel>(
   {
     name: {
@@ -47,6 +48,15 @@ const UserSchema= new Schema<TUser,UserModel>(
 UserSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; 
+  // If the user is trying to set the role to 'admin' during registration, throw an error
+  if (user.role === 'admin') {
+    throw new AppError(httpStatus.FORBIDDEN, 'Role cannot be set to admin during registration');
+  }
+
+  // If the role is not set, default it to 'user'
+  if (!user.role) {
+    user.role = 'user';
+  }
   // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,

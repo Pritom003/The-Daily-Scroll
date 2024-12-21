@@ -11,9 +11,10 @@ import httpStatus from 'http-status';
 const createBlogtoDB = async (payload: TBlog) => {
     // Create a new blog post with all the fields
 const author = await User.findById(payload.author).select('name email role')
-if (!author) {
+if (!author ) {
     throw new AppError(httpStatus.NOT_FOUND, 'Author not found');
 }
+
 const BlockedUser=await User.isUserBlocked(author?.email)
 if(BlockedUser){
 
